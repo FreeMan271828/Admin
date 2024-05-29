@@ -1,10 +1,14 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 const props = defineProps({
-  obj: Object
+  obj: Object,
+  // eslint-disable-next-line vue/no-reserved-props
+  key:String,
 })
+
 const formModel = ref()
 formModel.value = props.obj
+console.log(formModel.value)
 
 let powers = ref([])
 let selectionKeys = ref([])

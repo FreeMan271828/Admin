@@ -107,7 +107,7 @@ const useChoiceBox = (e,index) => {
   dialogVisible2.value = true
   diaTitle.value = e.target.innerText
   diaProps1.value=tableParams.value.userData[index]
-  // console.log(dia_index1.value)
+  console.log(tableParams.value.userData[index])
 }
 </script>
 
@@ -168,7 +168,7 @@ const useChoiceBox = (e,index) => {
             <template v-slot="scope">
               <div style="display: flex; justify-content: space-around">
                 <el-button type="success" @click="handleDetail">详情</el-button>
-                <el-button type="primary" @click="useChoiceBox(e,scope.row.rowIndex)">编辑</el-button>
+                <el-button type="primary" @click="useChoiceBox($event,scope.$index)">编辑</el-button>
                 <el-button type="danger" @click="handleDel">删除</el-button>
               </div>
             </template>
@@ -232,7 +232,7 @@ const useChoiceBox = (e,index) => {
       </div>
     </el-dialog>
     <el-dialog v-model="dialogVisible2" :title="diaTitle">
-      <editUser :obj="diaProps1" v-if="diaTitle === '编辑'"></editUser>
+      <editUser :obj="diaProps1" v-if="diaTitle === '编辑'" :key="new Date().getTime()"></editUser>
       <editUser :obj="diaProps2" v-else></editUser>
     </el-dialog>
   </div>
