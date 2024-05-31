@@ -2,30 +2,38 @@
 import {Plus, Refresh, Search} from '@element-plus/icons-vue'
 import {onMounted, ref} from 'vue'
 import editUser from '/@/views/frontuser/component/editUser.vue'
-// import {UserApi} from "/@/api/frontend/User.ts";
-import {UserPowerApi} from "/@/api/frontend/UserPower.ts";
+import {UserApi} from "/@/api/frontend/User.ts";
+// import {UserPowerApi} from "/@/api/frontend/UserPower.ts";
 
 onMounted(() => {
   handleQuery()
   // console.log(tableParams.value.userData[0].powers)
 })
 
-const getAllInfo = async () => {
-  const response = await UserPowerApi().getAllInfo();
+// const getAllInfo = async () => {
+//   const response = await UserPowerApi().getAllInfo();
+//   // console.log(response)
+//   if(response.data.code===200){
+//       return response.data.result;
+//   }else{
+//     console.error("Error fetching user data:", response.message);
+//     return null;
+//   }
+// }
+const getNewTable=async ({pageIndex,pageSize})=>{
+  const response = await UserApi().getAllUserInPage({pageIndex,pageSize});
+  tableParams.value.userData=response.data.result.items;  
+  tableParams.value.page=response.data.result.page;
+  tableParams.value.pageSize=response.data.result.pageSize;
+  tableParams.value.total=response.data.result.total;
   console.log(response)
-  if(response.data.code===200){
-      return response.data.result;
-  }else{
-    console.error("Error fetching user data:", response.message);
-    return null;
-  }
 }
 
 const tableParams = ref({
   userData:  [],
   page: 1,
   pageSize: 10,
-  total: 100
+  total: 0
 })
 
 const searchForm = ref('')
@@ -40,25 +48,40 @@ const Reset = () => {
 
 const handleQuery = async () => {
   console.log('查询')
-  tableParams.value.userData = await getAllInfo()
+  await getNewTable({pageIndex:1,pageSize:10})
 }
 
-const handleSizeChange = (val) => {
+const handleSizeChange =async (val) => {
   console.log(`每页 ${val} 条`)
+  getNewTable({pageIndex:tableParams.value.page,pageSize:val})
 }
 const handleCurrentChange = (val) => {
   console.log(`当前页: ${val}`)
+  getNewTable({pageIndex:val,pageSize:tableParams.value.pageSize})
 }
 
 const dialogVisible1 = ref(false)
 const dia_index1 = ref(0)
 const rowClick = (row) => {
-  console.log(row.rowIndex)
   dia_index1.value = tableParams.value.userData.indexOf(row)
 }
 const handleDetail = () => {
   dialogVisible1.value = true
   console.log(dia_index1.value)
+}
+const dialogVisible3 = ref(false)
+const delId=ref(0)
+const clickDel = (index) => {
+  delId.value=index
+  dialogVisible3.value = true
+}
+const handleDel = async () => {
+  console.log(tableParams.value.userData[delId.value].id);
+  
+  const res=await UserApi().deleteUserById(tableParams.value.userData[delId.value].id)
+  console.log(res);
+  dialogVisible3.value = false
+  getNewTable({pageIndex:tableParams.value.page,pageSize:tableParams.value.pageSize})
 }
 
 const diaProps1 = ref([])
@@ -116,18 +139,44 @@ const useChoiceBox = (e,index) => {
     <el-card>
       <el-form style="display: flex;" ref="searchForm" :model="searchFormValue"  class="form1">
         <el-form-item label="ID" prop="id">
-          <el-input
-              placeholder="ID"
-              v-model="searchFormValue.id"
-              clearable
-          ></el-input>
+          <el-select
+            v-model="searchFormValue.id"
+            multiple
+            filterable
+            remote
+            reserve-keyword
+            placeholder="ID"
+            :remote-method="remoteMethod"
+            :loading="loading"
+            style="width: 240px"
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="姓名" prop="name">
-          <el-input
-              placeholder="姓名"
-              v-model="searchFormValue.name"
-              clearable
-          ></el-input>
+          <el-select
+            v-model="searchFormValue.name"
+            multiple
+            filterable
+            remote
+            reserve-keyword
+            placeholder="姓名"
+            :remote-method="remoteMethod"
+            :loading="loading"
+            style="width: 240px"
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" :icon="Search">搜索</el-button>
@@ -140,12 +189,11 @@ const useChoiceBox = (e,index) => {
         </el-form-item>
       </el-form>
     </el-card>
-    <el-card style="height: 100%; display: grid; grid-template-rows: 1fr auto;"
-             body-style="display: flex; flex-direction: column; justify-content: space-between;">
+    <el-card style="height: 100%;position: relative;">
         <el-table border :data="tableParams.userData" @row-click="rowClick">
           <el-table-column type="index" label="序号" width="80"></el-table-column>
-          <el-table-column label="姓名" prop="user.name"></el-table-column>
-          <el-table-column label="密码" prop="user.userPassword"></el-table-column>
+          <el-table-column label="姓名" prop="name"></el-table-column>
+          <el-table-column label="密码" prop="userPassword"></el-table-column>
           <el-table-column label="权限" prop="powers">
             <template v-slot="scope">
               <div style="display: flex; justify-content: space-around">
@@ -159,8 +207,8 @@ const useChoiceBox = (e,index) => {
           </el-table-column>
           <el-table-column label="状态" >
             <template v-slot="scope">
-              <el-tag :type="scope.row.user.status ? 'success' : 'danger'">{{
-                  scope.row.user.status ? '正常' : '禁用'
+              <el-tag :type="scope.row.status ? 'success' : 'danger'">{{
+                  scope.row.status ? '正常' : '禁用'
                 }}</el-tag>
             </template>
           </el-table-column>
@@ -169,22 +217,22 @@ const useChoiceBox = (e,index) => {
               <div style="display: flex; justify-content: space-around">
                 <el-button type="success" @click="handleDetail">详情</el-button>
                 <el-button type="primary" @click="useChoiceBox($event,scope.$index)">编辑</el-button>
-                <el-button type="danger" @click="handleDel">删除</el-button>
+                <el-button type="danger" @click="clickDel(scope.$index)">删除</el-button>
               </div>
             </template>
           </el-table-column>
         </el-table>
         <el-pagination
+            style="position: absolute;bottom: 30px;left: 45vw;"
             v-model:currentPage="tableParams.page"
             v-model:page-size="tableParams.pageSize"
             :total="tableParams.total"
-            :page-sizes="[10, 20, 50, 100]"
+            :page-sizes="[5,10]"
             small
             background
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             layout="total, sizes, prev, pager, next, jumper"
-            style="bottom: 0; display: flex;align-self: flex-end;"
         />
       </el-card>
     <el-dialog v-model="dialogVisible1" title="详情">
@@ -192,7 +240,6 @@ const useChoiceBox = (e,index) => {
         <el-form
             style="
             height: 100%;
-            /* width: 50%; */
             display: flex;
             flex-direction: column;
             justify-content: space-around;
@@ -200,11 +247,11 @@ const useChoiceBox = (e,index) => {
           "
         >
           <el-form-item label="姓名">
-            <el-input v-model="tableParams.userData[dia_index1].user.name"></el-input>
+            <el-input v-model="tableParams.userData[dia_index1].name"></el-input>
           </el-form-item>
           <el-form-item label="密码">
             <el-input
-                v-model="tableParams.userData[dia_index1].user.userPassword"
+                v-model="tableParams.userData[dia_index1].userPassword"
             ></el-input>
           </el-form-item>
           <el-form-item label="权限">
@@ -216,7 +263,7 @@ const useChoiceBox = (e,index) => {
           </el-form-item>
           <el-form-item label="备注">
             <el-input
-                v-model="tableParams.userData[dia_index1].user.remark"
+                v-model="tableParams.userData[dia_index1].remark"
             ></el-input>
           </el-form-item>
           <el-form-item label="状态">
@@ -235,6 +282,21 @@ const useChoiceBox = (e,index) => {
       <editUser :obj="diaProps1" v-if="diaTitle === '编辑'" :key="new Date().getTime()"></editUser>
       <editUser :obj="diaProps2" v-else></editUser>
     </el-dialog>
+    <el-dialog
+      v-model="dialogVisible3"
+      title="删除用户"
+      width="500"
+    >
+    <span>确定要删除该用户吗?</span>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="dialogVisible3 = false">取消</el-button>
+        <el-button type="primary" @click="handleDel">
+          确认
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
   </div>
 </template>
 

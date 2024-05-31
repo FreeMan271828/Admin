@@ -36,10 +36,11 @@ export function UserApi() {
          * @param data id
          */
         deleteUserById: (data: number) =>{
+            console.log(data);
             return request({
                 url: `api/frontEndUser/delUserById`,
                 method: 'post',
-                data : data,
+                data,
             })
         },
         /**
@@ -79,7 +80,7 @@ export function UserApi() {
          */
         getAllUserInPage : (data : pageParam) => {
           return request({
-              url : `api/frontEndUser/getAllUserInPage`,
+              url : `api/frontEndUser/getAllUsersInPage`,
               method:'get',
               data:data,
           })

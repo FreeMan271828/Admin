@@ -36,16 +36,16 @@ const handleSelectionChange = (val) => {
   <el-scrollbar height="550px">
     <el-form :model="formModel">
       <el-form-item label="姓名">
-        <el-input v-model="formModel.user.name"></el-input>
+        <el-input v-model="formModel.name"></el-input>
       </el-form-item>
       <el-form-item label="密码">
-        <el-input v-model="formModel.user.userPassword"></el-input>
+        <el-input v-model="formModel.userPassword"></el-input>
       </el-form-item>
       <el-form-item label="备注">
-        <el-input v-model="formModel.user.remark"></el-input>
+        <el-input v-model="formModel.remark"></el-input>
       </el-form-item>
       <el-form-item label="状态">
-        <el-radio-group v-model="formModel.user.status">
+        <el-radio-group v-model="formModel.status">
           <el-radio :value="1" size="large">正常</el-radio>
           <el-radio :value="0" size="large">禁用</el-radio>
         </el-radio-group>
