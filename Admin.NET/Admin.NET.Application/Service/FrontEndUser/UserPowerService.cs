@@ -119,7 +119,7 @@ public class UserPowerService :  IDynamicApiController, ITransient
         var pagedUsers = users.ToPagedList(pageIndex, pageSize).Items.ToList();
         List<UserWithPower> userWithPowers = new List<UserWithPower>();
         foreach (FrontEndUser frontEndUser in pagedUsers)
-        {
+        {                                                                                         
             UserWithPower userWithPower = new UserWithPower();
             userWithPower.User = frontEndUser;
             //先在UserPower表中获取frontEndUser对应的powerId(List)

@@ -50,7 +50,7 @@ public class FrontEndUserService :IDynamicApiController, ITransient
     // 删除前端用户
     [DisplayName("通过Id删除前端用户")]
     [HttpPost("delUserById")]
-    public async Task<bool> DeleteFrontEndUser([FromQuery]long id)
+    public async Task<bool> DeleteFrontEndUser([FromQuery]int id)
     {
         // 先删除所有与该用户ID关联的UserPower记录
         var userPowers = await _userPowerDb.GetListAsync(up => up.UserId == id);
