@@ -131,7 +131,7 @@ const diaTitle = ref('')
 const useChoiceBox = (e,index) => {
   dialogVisible2.value = true
   diaTitle.value = e.target.innerText
-  diaProps1.value=tableParams.value.userData[index].user
+  diaProps1.value=tableParams.value.userData[index]
   console.log(tableParams.value.userData[index].user)
 }
 </script>
