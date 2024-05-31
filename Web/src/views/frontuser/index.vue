@@ -10,11 +10,12 @@ onMounted(() => {
   // console.log(tableParams.value.userData[0].powers)
 })
 const getNewTable=async ({pageIndex,pageSize})=>{
-  const response = await UserApi().getAllUserInPage({pageIndex,pageSize});
-  tableParams.value.userData=response.data.result.items;  
-  tableParams.value.page=response.data.result.page;
-  tableParams.value.pageSize=response.data.result.pageSize;
-  tableParams.value.total=response.data.result.total;
+  const response = await UserApi().getAllInfoInPage({pageIndex,pageSize});
+  tableParams.value.userData=response.data.result; 
+  const res= await UserApi().getAllUserInPage({pageIndex,pageSize});
+  tableParams.value.page=res.data.result.page;
+  tableParams.value.pageSize=res.data.result.pageSize;
+  tableParams.value.total=res.data.result.total;
   console.log(response)
 }
 
@@ -58,6 +59,7 @@ const handleDetail = () => {
   dialogVisible1.value = true
   console.log(dia_index1.value)
 }
+
 const dialogVisible3 = ref(false)
 const delId=ref(0)
 const clickDel = (index) => {
@@ -65,9 +67,13 @@ const clickDel = (index) => {
   dialogVisible3.value = true
 }
 const handleDel = async () => {
-  console.log(tableParams.value.userData[delId.value].id);
+  console.log(tableParams.value.userData[delId.value].user.id);
   
+<<<<<<< HEAD
   const res=UserApi().deleteUserById(tableParams.value.userData[delId.value].id)
+=======
+  const res=await UserApi().deleteUserById(tableParams.value.userData[delId.value].user.id)
+>>>>>>> 487fa5c8a2ab81b6570d41218f6e21842bc99bc7
   console.log(res);
   dialogVisible3.value = false
   getNewTable({pageIndex:tableParams.value.page,pageSize:tableParams.value.pageSize})
@@ -118,8 +124,8 @@ const diaTitle = ref('')
 const useChoiceBox = (e,index) => {
   dialogVisible2.value = true
   diaTitle.value = e.target.innerText
-  diaProps1.value=tableParams.value.userData[index]
-  console.log(tableParams.value.userData[index])
+  diaProps1.value=tableParams.value.userData[index].user
+  console.log(tableParams.value.userData[index].user)
 }
 </script>
 
@@ -181,9 +187,9 @@ const useChoiceBox = (e,index) => {
     <el-card style="height: 100%;position: relative;">
         <el-table border :data="tableParams.userData" @row-click="rowClick">
           <el-table-column type="index" label="序号" width="80"></el-table-column>
-          <el-table-column label="姓名" prop="name"></el-table-column>
-          <el-table-column label="密码" prop="userPassword"></el-table-column>
-          <el-table-column label="权限" prop="powers">
+          <el-table-column label="姓名" prop="user.name"></el-table-column>
+          <el-table-column label="密码" prop="user.userPassword"></el-table-column>
+          <el-table-column label="权限" prop="user.powers">
             <template v-slot="scope">
               <div style="display: flex; justify-content: space-around">
                 <el-tag
@@ -196,8 +202,8 @@ const useChoiceBox = (e,index) => {
           </el-table-column>
           <el-table-column label="状态" >
             <template v-slot="scope">
-              <el-tag :type="scope.row.status ? 'success' : 'danger'">{{
-                  scope.row.status ? '正常' : '禁用'
+              <el-tag :type="scope.row.user.status ? 'success' : 'danger'">{{
+                  scope.row.user.status ? '正常' : '禁用'
                 }}</el-tag>
             </template>
           </el-table-column>
@@ -236,11 +242,11 @@ const useChoiceBox = (e,index) => {
           "
         >
           <el-form-item label="姓名">
-            <el-input v-model="tableParams.userData[dia_index1].name"></el-input>
+            <el-input v-model="tableParams.userData[dia_index1].user.name"></el-input>
           </el-form-item>
           <el-form-item label="密码">
             <el-input
-                v-model="tableParams.userData[dia_index1].userPassword"
+                v-model="tableParams.userData[dia_index1].user.userPassword"
             ></el-input>
           </el-form-item>
           <el-form-item label="权限">
@@ -252,16 +258,16 @@ const useChoiceBox = (e,index) => {
           </el-form-item>
           <el-form-item label="备注">
             <el-input
-                v-model="tableParams.userData[dia_index1].remark"
+                v-model="tableParams.userData[dia_index1].user.remark"
             ></el-input>
           </el-form-item>
           <el-form-item label="状态">
             <el-tag
                 :type="
-                tableParams.userData[dia_index1].status ? 'success' : 'danger'
+                tableParams.userData[dia_index1].user.status ? 'success' : 'danger'
               "
             >
-              {{ tableParams.userData[dia_index1].status ? '正常' : '禁用' }}
+              {{ tableParams.userData[dia_index1].user.status ? '正常' : '禁用' }}
             </el-tag>
           </el-form-item>
         </el-form>
