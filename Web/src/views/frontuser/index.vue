@@ -79,7 +79,6 @@ const clickDel = (index) => {
 }
 const handleDel = async () => {
   console.log(tableParams.value.userData[delId.value].user.id);
-  
   const res=await UserApi().deleteUserById(tableParams.value.userData[delId.value].user.id)
   console.log(res);
   dialogVisible3.value = false
@@ -89,10 +88,12 @@ const handleDel = async () => {
 const diaProps1 = ref([])
 
 const diaProps2 = ref({
-  name: '',
-  password: '',
-  remark: '',
-  status: true,
+  user:{
+    name: '',
+    password: '',
+    remark: '',
+    status: true,
+  },
   powers: [
     {
       name: 'test1',
@@ -132,7 +133,6 @@ const useChoiceBox = (e,index) => {
   dialogVisible2.value = true
   diaTitle.value = e.target.innerText
   diaProps1.value=tableParams.value.userData[index]
-  console.log(tableParams.value.userData[index].user)
 }
 </script>
 
@@ -282,7 +282,7 @@ const useChoiceBox = (e,index) => {
     </el-dialog>
     <el-dialog v-model="dialogVisible2" :title="diaTitle">
       <editUser :obj="diaProps1" v-if="diaTitle === '编辑'" :key="new Date().getTime()"></editUser>
-      <editUser :obj="diaProps2" v-else></editUser>
+      <editUser :obj="diaProps2" v-else :key="new Date().getDate()" ></editUser>
     </el-dialog>
     <el-dialog
       v-model="dialogVisible3"
