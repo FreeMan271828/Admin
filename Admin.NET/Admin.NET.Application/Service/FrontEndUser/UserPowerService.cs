@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Furion.Logging;
 
 namespace Admin.NET.Application;
 
@@ -64,7 +65,7 @@ public class UserPowerService :  IDynamicApiController, ITransient
     //待维护
     [HttpGet("getPowerByUserId")]
     public async Task<List<UserPower>> GetPowerByUserId([FromQuery]int id)
-    {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   {
         return  _UserPowerDb.AsQueryable()
             .Where(it => it.UserId.Equals(id))
             .ToList();
@@ -77,14 +78,6 @@ public class UserPowerService :  IDynamicApiController, ITransient
         return await _UserPowerDb.GetListAsync();
     }
     
-    //分页查询全部的用户权限
-    [HttpGet("getUserPowerInPage")]
-    [DisplayName("分页查询所有用户权限")]
-    public async Task<SqlSugarPagedList<UserPower>> getUserPowerInPage([FromQuery]int pageIndex, [FromQuery]int pageSize)
-    {
-        return await _UserPowerDb.AsQueryable().ToPagedListAsync<UserPower>(pageIndex, pageSize);
-    }
-    
     //发送用户全部信息
     [HttpGet("getAllInfo")]
     public async Task<List<UserWithPower>> getAllInfo()
@@ -92,6 +85,40 @@ public class UserPowerService :  IDynamicApiController, ITransient
         List<UserWithPower> userWithPowers = new List<UserWithPower>();
         List<FrontEndUser> users = _FrontEndUserDb.GetListAsync().Result;
         foreach (FrontEndUser frontEndUser in users)
+        {
+            UserWithPower userWithPower = new UserWithPower();
+            userWithPower.User = frontEndUser;
+            //先在UserPower表中获取frontEndUser对应的powerId(List)
+            List<UserPower> userPowers = GetPowerByUserId(frontEndUser.Id)
+                .Result;
+            List<int> powerIds = new List<int>();
+            foreach (UserPower userPower in userPowers)
+            {
+                powerIds.Add(userPower.PowerId);
+            }
+            //在PowerBase表中获得powerId对应的power
+            List<PowerBase> powerBases = new List<PowerBase>();
+            foreach (int powerId in powerIds)
+            {
+                powerBases.Add(_PowerBaseDb.GetByIdAsync(powerId).Result);
+            }
+            userWithPower.Powers = powerBases;
+            userWithPowers.Add(userWithPower);
+        }
+        return userWithPowers;
+    }
+    
+    //发送用户全部信息,进行分页查询
+    [HttpGet("getAllInfoInPage")]
+    public async Task<List<UserWithPower>> getAllInfoInPage([FromQuery] int pageIndex, [FromQuery] int pageSize)
+    {
+        // 获取所有用户数据
+        var users = _FrontEndUserDb.GetListAsync().Result;
+
+        // 使用 X.PagedList 库进行分页
+        var pagedUsers = users.ToPagedList(pageIndex, pageSize).Items.ToList();
+        List<UserWithPower> userWithPowers = new List<UserWithPower>();
+        foreach (FrontEndUser frontEndUser in pagedUsers)
         {
             UserWithPower userWithPower = new UserWithPower();
             userWithPower.User = frontEndUser;
