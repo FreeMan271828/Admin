@@ -9,16 +9,31 @@ namespace Admin.NET.Core;
 /// </summary>
 public class CacheConst
 {
-    ///// <summary>
-    ///// 用户缓存
-    ///// </summary>
-    //public const string KeyUser = "sys_user:";
+    /// <summary>
+    /// 用户缓存
+    /// </summary>
+    public const string KeyUser = "sys_user:";
+
+    /**
+     * 前端用户缓存
+     */
+    public const string FrontEndUser = "front_end_user:";
+
+    /**
+     * 权限缓存
+     */
+    public const string PowerBase = "power_base:";
+
+    /**
+     * 用户权限
+     */
+    public const string UserPower = "user_power:"; 
 
     ///// <summary>
     ///// 用户菜单缓存
     ///// </summary>
     //public const string KeyUserMenu = "sys_user_menu:";
-
+    
     /// <summary>
     /// 用户权限缓存（按钮集合）
     /// </summary>

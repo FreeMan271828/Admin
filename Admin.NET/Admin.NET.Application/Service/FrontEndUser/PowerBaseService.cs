@@ -22,7 +22,7 @@ public class PowerBaseService : IDynamicApiController, ITransient
     
     // 增加权限
     [HttpPost("addPower")]
-    public async Task<bool> AddPowerAsync(PowerBase power)
+    public async Task<bool> AddPowerAsync([FromQuery]PowerBase power)
     {
         // 确保不添加重复的权限名称
         var existingPower = await _powerBaseDb.GetFirstAsync(p => p.Name == power.Name);
@@ -37,14 +37,14 @@ public class PowerBaseService : IDynamicApiController, ITransient
     
     // 修改权限名称
     [HttpPost("changePower")]
-    public async Task<bool> UpdatePowerNameAsync(PowerBase powerBase)
+    public async Task<bool> UpdatePowerNameAsync([FromQuery]PowerBase powerBase)
     {
         return await _powerBaseDb.UpdateAsync(powerBase);
     }
 
     //删除权限信息
     [HttpPost("delPowerById")]
-    public async Task<bool> DeletePowerBase(int id)
+    public async Task<bool> DeletePowerBase([FromQuery]int id)
     {
         // 先删除所有与该权限ID关联的UserPower记录
         var userPowers = await _powerBaseDb.GetListAsync(up => up.Id == id);
