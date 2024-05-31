@@ -106,6 +106,13 @@ export function UserApi() {
                 method:'post',
                 data:data,
             })
+        },
+        getAllInfoInPage: (data: pageParam) => {
+            return request({
+                url: `api/userPower/getAllInfoInPage`,
+                method:'get',
+                data:data,
+            })
         }
     };
 }
