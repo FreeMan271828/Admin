@@ -68,12 +68,7 @@ const clickDel = (index) => {
 }
 const handleDel = async () => {
   console.log(tableParams.value.userData[delId.value].user.id);
-  
-<<<<<<< HEAD
-  const res=UserApi().deleteUserById(tableParams.value.userData[delId.value].id)
-=======
   const res=await UserApi().deleteUserById(tableParams.value.userData[delId.value].user.id)
->>>>>>> 487fa5c8a2ab81b6570d41218f6e21842bc99bc7
   console.log(res);
   dialogVisible3.value = false
   getNewTable({pageIndex:tableParams.value.page,pageSize:tableParams.value.pageSize})
