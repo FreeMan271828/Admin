@@ -35,12 +35,12 @@ export function UserApi() {
          * 删除用户
          * @param data id
          */
-        deleteUserById: (data: number) =>{
-            console.log(data);
+        deleteUserById(data: number) {
+            console.log(data)
             return request({
                 url: `api/frontEndUser/delUserById`,
                 method: 'post',
-                data,
+                data:data,
             })
         },
         /**
@@ -51,7 +51,7 @@ export function UserApi() {
             return request({
                 url : 'api/frontEndUser/changeUserInfo',
                 method : 'post',
-                data,
+                data:data,
             })
         },
         /**

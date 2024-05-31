@@ -9,17 +9,6 @@ onMounted(() => {
   handleQuery()
   // console.log(tableParams.value.userData[0].powers)
 })
-
-// const getAllInfo = async () => {
-//   const response = await UserPowerApi().getAllInfo();
-//   // console.log(response)
-//   if(response.data.code===200){
-//       return response.data.result;
-//   }else{
-//     console.error("Error fetching user data:", response.message);
-//     return null;
-//   }
-// }
 const getNewTable=async ({pageIndex,pageSize})=>{
   const response = await UserApi().getAllUserInPage({pageIndex,pageSize});
   tableParams.value.userData=response.data.result.items;  
@@ -78,7 +67,7 @@ const clickDel = (index) => {
 const handleDel = async () => {
   console.log(tableParams.value.userData[delId.value].id);
   
-  const res=await UserApi().deleteUserById(tableParams.value.userData[delId.value].id)
+  const res=UserApi().deleteUserById(tableParams.value.userData[delId.value].id)
   console.log(res);
   dialogVisible3.value = false
   getNewTable({pageIndex:tableParams.value.page,pageSize:tableParams.value.pageSize})
