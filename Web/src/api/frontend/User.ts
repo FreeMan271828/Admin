@@ -8,7 +8,7 @@ class changePwdParam{
 }
 //获取请求参数
 class getParam{
-    userId : number = 0;    //用户Id
+    id : number = 0;    //用户Id
     name : string = "";     //用户名称
 }
 //分页查询参数
@@ -36,7 +36,6 @@ export function UserApi() {
          * @param data id
          */
         deleteUserById: (id: number) =>{
-            console.log(id);
             return request({
                 url: `api/frontEndUser/delUserById`,
                 method: 'post',
@@ -70,10 +69,12 @@ export function UserApi() {
          * @param data userId name
          */
         getUserByParam: (data: getParam) => {
+            console.log(data);
+            
             return request({
-                url: `api/frontEndUser/getUser`,
+                url: `api/frontEndUser/getUserByParam`,
                 method:'get',
-                data:data,
+                data,
             })
         },
         /**

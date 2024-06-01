@@ -3,6 +3,7 @@ import {Plus, Refresh, Search} from '@element-plus/icons-vue'
 import {onMounted, ref} from 'vue'
 import editUser from '/@/views/frontuser/component/editUser.vue'
 import {UserApi} from "/@/api/frontend/User.ts";
+import { PowerApi } from '/@/api/frontend/Power';
 // import {UserPowerApi} from "/@/api/frontend/UserPower.ts";
 
 onMounted(() => {
@@ -42,9 +43,10 @@ const searchFormValue = ref({
   id: '',
   name: ''
 })
-const Reset = () => {
+const Reset =async () => {
   console.log('重置')
   searchForm.value.resetFields()
+  await getNewTable({pageIndex:1,pageSize:10})
 }
 
 const handleQuery = async () => {
@@ -90,49 +92,46 @@ const diaProps1 = ref([])
 const diaProps2 = ref({
   user:{
     name: '',
-    password: '',
+    userPassword: '',
     remark: '',
-    status: true,
+    status: null,
   },
-  powers: [
-    {
-      name: 'test1',
-      id: 1,
-      status: false
-    },
-    {
-      name: 'test2',
-      id: 2,
-      status: false
-    },
-    {
-      name: 'test3',
-      id: 3,
-      status: false
-    },
-    {
-      name: 'test4',
-      id: 4,
-      status: false
-    },
-    {
-      name: 'test5',
-      id: 5,
-      status: false
-    },
-    {
-      name: 'test6',
-      id: 6,
-      status: false
-    }
-  ]
+  powers: []
 })
 const dialogVisible2 = ref(false)
 const diaTitle = ref('')
-const useChoiceBox = (e,index) => {
-  dialogVisible2.value = true
+const useChoiceBox = async (e,index) => {
   diaTitle.value = e.target.innerText
-  diaProps1.value=tableParams.value.userData[index]
+  // diaProps1.value=tableParams.value.userData[index]
+  const res=await PowerApi().getAllPower()
+  if(diaTitle.value==='新增'){
+    diaProps2.value.powers=res.data.result.map(item => {
+      return {
+        ...item,
+        status: 0
+      }
+    })
+  }else{
+    diaProps1.value = JSON.parse(JSON.stringify(tableParams.value.userData[index]));
+    // 过滤出 res.data.result 数组中那些在 diaProps1.value.powers 数组中没有相同 id 的元素
+    const newItems = res.data.result.filter(resultItem => {
+      return !diaProps1.value.powers.find(item => item.id === resultItem.id);
+    });
+
+    // 将这些新元素添加到 diaProps1.value.powers 数组中
+    diaProps1.value.powers = [...diaProps1.value.powers, ...newItems.map(item => {
+      return {
+        ...item,
+        status: 0
+      }})];
+      }
+  dialogVisible2.value = true
+}
+
+const search = async () => {
+  const res=await UserApi().getUserByParam(searchFormValue.value)
+  console.log(res);
+  tableParams.value.userData=res.data.result
 }
 </script>
 
@@ -141,47 +140,13 @@ const useChoiceBox = (e,index) => {
     <el-card>
       <el-form style="display: flex;" ref="searchForm" :model="searchFormValue"  class="form1">
         <el-form-item label="ID" prop="id">
-          <el-select
-            v-model="searchFormValue.id"
-            multiple
-            filterable
-            remote
-            reserve-keyword
-            placeholder="ID"
-            :remote-method="remoteMethod"
-            :loading="loading"
-            style="width: 240px"
-          >
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
+          <el-input placeholder="ID" v-model="searchFormValue.id"></el-input>
         </el-form-item>
         <el-form-item label="姓名" prop="name">
-          <el-select
-            v-model="searchFormValue.name"
-            multiple
-            filterable
-            remote
-            reserve-keyword
-            placeholder="姓名"
-            :remote-method="remoteMethod"
-            :loading="loading"
-            style="width: 240px"
-          >
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
+          <el-input placeholder="姓名" v-model="searchFormValue.name"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :icon="Search">搜索</el-button>
+          <el-button type="primary" :icon="Search" @click="search">搜索</el-button>
           <el-button type="primary" :icon="Refresh" @click="Reset"
           >重置</el-button
           >
@@ -281,8 +246,8 @@ const useChoiceBox = (e,index) => {
       </div>
     </el-dialog>
     <el-dialog v-model="dialogVisible2" :title="diaTitle">
-      <editUser :obj="diaProps1" v-if="diaTitle === '编辑'" :key="new Date().getTime()"></editUser>
-      <editUser :obj="diaProps2" v-else :key="new Date().getDate()" ></editUser>
+      <editUser :flag="1" :obj="diaProps1" v-if="diaTitle === '编辑'" :key="new Date().getTime()"></editUser>
+      <editUser :flag="0" :obj="diaProps2" v-else :key="new Date().getDate()" ></editUser>
     </el-dialog>
     <el-dialog
       v-model="dialogVisible3"

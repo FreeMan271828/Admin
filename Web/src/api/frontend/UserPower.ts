@@ -1,14 +1,8 @@
 import request from '/@/utils/request';
-import {number} from "echarts";
 class unitId{
     userId : number = 0;
     powerId : number = 0;
 }
-class pageParam{
-    pageIndex: number = 0;
-    pageSize: number = 0;
-}
-
 export function UserPowerApi() {
     return {
         /**
