@@ -1,19 +1,20 @@
 <script setup>
+import { useRouter } from 'vue-router';
 import { ref, onMounted } from 'vue'
+import { UserApi } from '/@/api/frontend/User';
 const props = defineProps({
   obj: Object,
   // eslint-disable-next-line vue/no-reserved-props
   key:String,
+  flag:Number
 })
-
 const formModel = ref()
 formModel.value = props.obj
-console.log(formModel.value)
 
 let powers = ref([])
 let selectionKeys = ref([])
 onMounted(() => {
-  powers.value = formModel.value.powers
+  powers.value=formModel.value.powers
   selectionKeys = ref(
       powers.value.filter((power) => power.status).map((power) => power.id)
   )
@@ -30,6 +31,19 @@ onMounted(() => {
 })
 const handleSelectionChange = (val) => {
   selectionKeys.value = val.map((item) => item.id)
+  console.log(selectionKeys.value);
+}
+
+// const router=useRouter()
+const handleConfirm = () => {
+  formModel.value.powers = selectionKeys.value
+  if(props.flag===0){
+    UserApi().addUser(formModel.value)
+  }else{
+    //编辑的接口
+  }
+  // router.go(0)
+  console.log(formModel.value);
 }
 </script>
 <template>
@@ -71,6 +85,7 @@ const handleSelectionChange = (val) => {
         </el-select>
         <el-table
             :data="formModel.powers"
+            row-key="id"
             border
             ref="multipleTable"
             @selection-change="handleSelectionChange"
@@ -91,7 +106,7 @@ const handleSelectionChange = (val) => {
       </el-form-item>
       <el-form-item>
         <div style="display: flex; justify-content: right; width: 100%">
-          <el-button type="primary">确认</el-button>
+          <el-button type="primary" @click="handleConfirm">确认</el-button>
         </div>
       </el-form-item>
     </el-form>
