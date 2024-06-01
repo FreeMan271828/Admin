@@ -7,7 +7,7 @@
     "ConnectionConfigs": [
       {
         //"ConfigId": "1300000000001", // 默认库标识-禁止修改
-        "DbType": "Mysql", // MySql、SqlServer、Sqlite、Oracle、PostgreSQL、Dm、Kdbndp、Oscar、MySqlConnector、Access、OpenGauss、QuestDB、HG、ClickHouse、GBase、Odbc、Custom
+        "DbType": "MySql", // MySql、SqlServer、Sqlite、Oracle、PostgreSQL、Dm、Kdbndp、Oscar、MySqlConnector、Access、OpenGauss、QuestDB、HG、ClickHouse、GBase、Odbc、Custom
         "ConnectionString": "server=rm-bp1175exu9h9tyd17ao.mysql.rds.aliyuncs.com;uid=FreeMan;password=FREEDOMman0807;database=yaycszls", // 库连接字符串
         //"DbType": "SqlServer", // MySql、SqlServer、Sqlite、Oracle、PostgreSQL、Dm、Kdbndp、Oscar、MySqlConnector、Access、OpenGauss、QuestDB、HG、ClickHouse、GBase、Odbc、Custom
         //"ConnectionString": "Data Source=localhost/MSSQLSERVER02;Initial Catalog=YAYCSZLS;Integrated Security=True;Trust Server Certificate=True", // 库连接字符串

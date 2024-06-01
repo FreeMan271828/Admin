@@ -77,10 +77,12 @@ const handleDel = async () => {
 const diaProps1 = ref([])
 
 const diaProps2 = ref({
-  name: '',
-  password: '',
-  remark: '',
-  status: true,
+  user:{
+    name: '',
+    password: '',
+    remark: '',
+    status: true,
+  },
   powers: [
     {
       name: 'test1',
@@ -269,7 +271,7 @@ const useChoiceBox = (e,index) => {
     </el-dialog>
     <el-dialog v-model="dialogVisible2" :title="diaTitle">
       <editUser :obj="diaProps1" v-if="diaTitle === '编辑'" :key="new Date().getTime()"></editUser>
-      <editUser :obj="diaProps2" v-else></editUser>
+      <editUser :obj="diaProps2" v-else :key="new Date().getDate()" ></editUser>
     </el-dialog>
     <el-dialog
       v-model="dialogVisible3"
