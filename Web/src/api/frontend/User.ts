@@ -16,7 +16,13 @@ class pageParam{
     pageIndex: number = 0;  //分页索引
     pageSize: number = 0;   //分页大小
 }
-
+class addParam{
+    name: string = "";
+    userPassword: string = "";
+    status: number = 1;
+    remark: string = "";
+    userName:string='';
+}
 
 export function UserApi() {
     return {
@@ -24,27 +30,30 @@ export function UserApi() {
          * 添加用户
          * @param data user对象
          */
-        addUser: (data: object) => {
+        addUser: (data: addParam) => {
+            console.log(data);
             return request({
                 url: 'api/frontEndUser/addUser',
                 method : 'post',
-                data,
+                params:{
+                    name: data.name,
+                    userPassword: data.userPassword,
+                    status: data.status,
+                    remark: data.remark,
+                    userName: data.userName,
+                },
             })
         },
         /**
          * 删除用户
          * @param data id
          */
-<<<<<<< HEAD
         deleteUserById: (data: number) =>{
             console.log(data);
-=======
-        deleteUserById: (id: number) =>{
->>>>>>> 9f7ce33ddd65fd8a99f67774e2c6414077413386
             return request({
                 url: `api/frontEndUser/delUserById`,
                 method: 'post',
-                data,
+                params: {id: data},
             })
         },
         /**

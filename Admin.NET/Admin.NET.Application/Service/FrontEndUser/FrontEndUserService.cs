@@ -23,14 +23,14 @@ public class FrontEndUserService :IDynamicApiController, ITransient
     // 增加前端用户
     [DisplayName("增加前端用户")]
     [HttpPost("addUser")]
-    public async Task<bool> AddFrontEndUser([FromQuery]string name,[FromQuery]string userPasswword,
+    public async Task<bool> AddFrontEndUser([FromQuery]string name,[FromQuery]string userPassword,
                                                 [FromQuery]int ? status,[FromQuery]string ? remark)
     {
         // 在添加之前可以添加额外的逻辑，比如密码加密等
         // EncryptPassword是密码加密方法
         //user.UserPassword = EncryptPassword(user.UserPassword);
         FrontEndUser user = new FrontEndUser(){
-            Name = name,UserPassword = userPasswword,Remark = remark
+            Name = name,UserPassword = userPassword,Remark = remark
         };
         user.Status = status.IsNullOrEmpty() ? 1 : 0;
         return await _frontEndUserDao.AddFrontEndUser(user);

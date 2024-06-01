@@ -84,6 +84,7 @@ const diaProps2 = ref({
     userPassword: '',
     remark: '',
     status: null,
+    userName:'111'
   },
   powers: []
 })

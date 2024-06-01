@@ -34,15 +34,15 @@ const handleSelectionChange = (val) => {
   console.log(selectionKeys.value);
 }
 
-// const router=useRouter()
+const router=useRouter()
 const handleConfirm = () => {
   formModel.value.powers = selectionKeys.value
   if(props.flag===0){
-    UserApi().addUser(formModel.value)
+    UserApi().addUser(formModel.value.user)
   }else{
     //编辑的接口
   }
-  // router.go(0)
+  router.go(0)
   console.log(formModel.value);
 }
 </script>
